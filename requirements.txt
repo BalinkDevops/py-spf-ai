@@ -6,3 +6,4 @@ sqlalchemy-bigquery
 google-cloud-bigquery
 google-cloud-bigquery-storage
 gunicorn
+pydantic
