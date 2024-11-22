@@ -31,6 +31,7 @@ def execute_code():
         db = SQLDatabase(engine)
         llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
         toolkit = SQLDatabaseToolkit(db=db, llm=llm)
+        toolkit.model_rebuild()
         toolkit.get_tools()
 
         # Create SQL AgentExecutor 
