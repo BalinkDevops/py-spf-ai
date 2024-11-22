@@ -21,6 +21,13 @@ dataset = "retail_sales_dataset"
 # SQLAlchemy connection
 sqlalchemy_url = f'bigquery://{project}/{dataset}?credentials_path={service_account_file}'
 
+class SQLDatabaseToolkit(SQLDatabaseToolkit):
+    def model_rebuild(self):
+        self.db.rebuild()
+
+    def gt(self):
+        self.db.get_tools()
+
 
 # Define the route to execute the code
 @app.route('/', methods=['GET'])
@@ -30,9 +37,10 @@ def execute_code():
         engine = create_engine(sqlalchemy_url)
         db = SQLDatabase(engine)
         llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
-        toolkit = SQLDatabaseToolkit(db=db, llm=llm)
-        toolkit.model_rebuild()
-        toolkit.get_tools()
+        
+        # Create a SQLDatabaseToolkit
+        toolkit = SQLDatabaseToolkit(llm=llm, db=db)
+        toolkit.gt()
 
         # Create SQL AgentExecutor 
         agent_executor = create_sql_agent(
