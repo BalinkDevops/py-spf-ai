@@ -26,26 +26,28 @@ sqlalchemy_url = f'bigquery://{project}/{dataset}?credentials_path={service_acco
 @app.route('/', methods=['GET'])
 def execute_code():
     try:
-        # Create an Engine and SQLDatabaseToolkit 
+        # Create an Engine and SQLDatabaseToolkit
         engine = create_engine(sqlalchemy_url)
         db = SQLDatabase(engine)
-        llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
-        toolkit = SQLDatabaseToolkit(db=db, llm=llm)
-        toolkit.get_tools()
 
-        # Create SQL AgentExecutor 
+        # Create the LLM (language model) instance
+        llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")  # Correctly instantiate LLM
+
+        # Create a Toolkit using the LLM and the database connection
+        toolkit = SQLDatabaseToolkit(db=db, llm=llm)
+
+        # Create SQL AgentExecutor
         agent_executor = create_sql_agent(
             llm=llm,
             toolkit=toolkit,
             agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
             verbose=True,
             top_k=1000,
-            handle_parsing_errors=True 
         )
-        
-        # Execute
-        result = agent_executor.execute("What are the total sales for each product category?")
-        return result
+
+        # Run the agent with a sample query
+        result = agent_executor.run('What are the top 5 products by sales?')
+        print(result)
     except Exception as e:
         return f"An error occurred: {str(e)}", 500
 
