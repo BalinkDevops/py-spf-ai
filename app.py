@@ -21,14 +21,6 @@ dataset = "retail_sales_dataset"
 # SQLAlchemy connection
 sqlalchemy_url = f'bigquery://{project}/{dataset}?credentials_path={service_account_file}'
 
-class SQLDatabaseToolkit(SQLDatabaseToolkit):
-    def model_rebuild(self):
-        self.db.rebuild(raise_errors=True)
-
-    def gt(self):
-        self.db.get_tools()
-
-
 # Define the route to execute the code
 @app.route('/', methods=['GET'])
 def execute_code():
@@ -40,7 +32,6 @@ def execute_code():
         
         # Create a SQLDatabaseToolkit
         toolkit = SQLDatabaseToolkit(llm=llm, db=db)
-        toolkit.gt()
 
         # Create SQL AgentExecutor 
         agent_executor = create_sql_agent(
