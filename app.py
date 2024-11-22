@@ -23,7 +23,7 @@ sqlalchemy_url = f'bigquery://{project}/{dataset}?credentials_path={service_acco
 
 class SQLDatabaseToolkit(SQLDatabaseToolkit):
     def model_rebuild(self):
-        self.db.rebuild()
+        self.db.rebuild(raise_errors=True)
 
     def gt(self):
         self.db.get_tools()
