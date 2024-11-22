@@ -33,9 +33,6 @@ def execute_code():
         toolkit = SQLDatabaseToolkit(db=db, llm=llm)
         toolkit.get_tools()
 
-        # Rebuild the toolkit to fix Pydantic-related issues
-        toolkit.model_rebuild()
-
         # Create SQL AgentExecutor 
         agent_executor = create_sql_agent(
             llm=llm,
